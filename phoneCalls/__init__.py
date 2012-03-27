@@ -120,7 +120,7 @@ class phonecallPlugin(Plugin):
                 for key in numberTypesLocalized.keys():
                     if numberTypesLocalized[key][language].lower() == name.lower():
                         return numberTypesLocalized[key][language]
-        return None
+        return name
     
     def findPhoneForNumberType(self, person, numberType, language):         
         # first check if a specific number was already requested
@@ -147,14 +147,14 @@ class phonecallPlugin(Plugin):
                     lst = DisambiguationList(items=[], speakableSelectionResponse="OK...", listenAfterSpeaking=True, speakableText="", speakableFinalDemitter=speakableDemitter[language], speakableDemitter=", ",selectionResponse="OK...")
                     rootView.views.append(lst)
                     for phone in person.phones:
-                        numberType = phone.label
+                        numberType = numberTypesLocalized[phone.label][language] if phone.label in numberTypesLocalized else phone.label
                         item = ListItem()
                         item.title = ""
-                        item.text = u"{0}: {1}".format(numberTypesLocalized[numberType][language], phone.number)
+                        item.text = u"{0}: {1}".format(numberType, phone.number)
                         item.selectionText = item.text
-                        item.speakableText = u"{0}  ".format(numberTypesLocalized[numberType][language])
+                        item.speakableText = u"{0}  ".format(numberType)
                         item.object = phone
-                        item.commands.append(SendCommands(commands=[StartRequest(handsFree=False, utterance=numberTypesLocalized[numberType][language])]))
+                        item.commands.append(SendCommands(commands=[StartRequest(handsFree=False, utterance=numberType)]))
                         lst.items.append(item)
                     answer = self.getResponseForRequest(rootView)
                     numberType = self.getNumberTypeForName(answer, language)
