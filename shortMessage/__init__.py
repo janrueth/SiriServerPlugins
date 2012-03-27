@@ -467,14 +467,14 @@ class shortMessaging(Plugin):
                     lst.selectionResponse = "OK"
                     root.views.append(lst)
                     for phone in person.phones:
-                        numberType = phone.label
+                        numberType = numberTypesLocalized[phone.label][language] if phone.label in numberTypesLocalized else phone.label
                         item = UIListItem()
                         item.title = ""
-                        item.text = u"{0}: {1}".format(numberTypesLocalized[numberType][language], phone.number)
+                        item.text = u"{0}: {1}".format(numberType, phone.number)
                         item.selectionText = item.text
-                        item.speakableText = u"{0}  ".format(numberTypesLocalized[numberType][language])
+                        item.speakableText = u"{0}  ".format(numberType)
                         item.object = phone
-                        item.commands = [SendCommands(commands=[StartRequest(handsFree=False, utterance=numberTypesLocalized[numberType][language])])]
+                        item.commands = [SendCommands(commands=[StartRequest(handsFree=False, utterance=numberType)])]
                         lst.items.append(item)
                         
                     answer = self.getResponseForRequest(root)
@@ -498,7 +498,7 @@ class shortMessaging(Plugin):
                 for key in numberTypesLocalized.keys():
                     if numberTypesLocalized[key][language].lower() == name.lower():
                         return numberTypesLocalized[key][language]
-        return None
+        return name
         
     def presentPossibleUsers(self, persons, language):
         root = UIAddViews(self.refId)
