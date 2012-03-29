@@ -3,7 +3,7 @@
 
 from plugin import *
 from siriObjects.baseObjects import ObjectIsCommand
-from siriObjects.contactObjects import PersonSearch, PersonSearchCompleted
+from siriObjects.contactObjects import ABPersonSearch, ABPersonSearchCompleted
 from siriObjects.phoneObjects import PhoneCall
 from siriObjects.systemObjects import SendCommands, StartRequest, ResultCallback, \
     Person, PersonAttribute
@@ -11,106 +11,165 @@ from siriObjects.uiObjects import AddViews, DisambiguationList, ListItem, \
     AssistantUtteranceView
 
 responses = {
-'notFound': 
-    {'de-DE': u"Entschuldigung, ich konnte niemanden in deinem Telefonbuch finden der so heißt",
-     'en-US': u"Sorry, I did not find a match in your phone book"
-    },
-'devel':
-    {'de-DE': u"Entschuldigung, aber diese Funktion befindet sich noch in der Entwicklungsphase",
-     'en-US': u"Sorry this feature is still under development"
-    },
- 'select':
-    {'de-DE': u"Wen genau?", 
-     'en-US': u"Which one?"
-    },
-'selectNumber':
-    {'de-DE': u"Welche Telefonnummer für {0}",
-     'en-US': u"Which phone one for {0}"
-    },
-'callPersonSpeak':
-    {'de-DE': u"Rufe {0}, {1} an.",
-     'en-US': u"Calling {0}, {1}."
-    },
-'callPerson': 
-    {'de-DE': u"Rufe {0}, {1} an: {2}",
-     'en-US': u"Calling {0}, {1}: {2}"
-    }
+    'notFound':
+        {
+        'de-DE': u"Entschuldigung, ich konnte niemanden in deinem Telefonbuch finden der so heißt",
+        'en-US': u"Sorry, I did not find a match in your phone book",
+        'en-GB': u"Sorry, I could not find a match in your phone book"
+        },
+    'devel':
+        {
+        'de-DE': u"Entschuldigung, aber diese Funktion befindet sich noch in der Entwicklungsphase",
+        'en-US': u"Sorry this feature is still under development",
+        'en-GB': u"Sorry, this feature is still under development"
+        },
+     'select':
+        {
+        'de-DE': u"Wen genau?",
+        'en-US': u"Which one?",
+        'en-GB': u"Which one?"
+        },
+    'selectNumber':
+        {
+        'de-DE': u"Welche Telefonnummer für {0}",
+        'en-US': u"Which phone one for {0}",
+        'en-GB': u"Which phone number for {0}"
+        },
+    'callPersonSpeak':
+        {
+        'de-DE': u"Rufe {0}, {1} an.",
+        'en-US': u"Calling {0}, {1}.",
+        'en-GB': u"Calling {0}, {1}."
+        },
+    'callPerson':
+        {
+        'de-DE': u"Rufe {0}, {1} an: {2}",
+        'en-US': u"Calling {0}, {1}: {2}",
+        'en-GB': u"Calling {0}, {1}: {2}"
+        }
 }
 
-numberTypesLocalized= {
-'_$!<Mobile>!$_': {'en-US': u"mobile", 'de-DE': u"Handynummer"},
-'iPhone': {'en-US': u"iPhone", 'de-DE': u"iPhone-Nummer"},
-'_$!<Home>!$_': {'en-US': u"home", 'de-DE': u"Privatnummer"},
-'_$!<Work>!$_': {'en-US': u"work", 'de-DE': u"Geschäftsnummer"},
-'_$!<Main>!$_': {'en-US': u"main", 'de-DE': u"Hauptnummer"},
-'_$!<HomeFAX>!$_': {'en-US': u"home fax", 'de-DE': u'private Faxnummer'},
-'_$!<WorkFAX>!$_': {'en-US': u"work fax", 'de-DE': u"geschäftliche Faxnummer"},
-'_$!<OtherFAX>!$_': {'en-US': u"_$!<OtherFAX>!$_", 'de-DE': u"_$!<OtherFAX>!$_"},
-'_$!<Pager>!$_': {'en-US': u"pager", 'de-DE': u"Pagernummer"},
-'_$!<Other>!$_':{'en-US': u"other phone", 'de-DE': u"anderes Telefon"}
+numberTypesLocalized = {
+    '_$!<Mobile>!$_': {'en-US': u"mobile", 'en-GB': u"mobile", 'de-DE': u"Handynummer"},
+    'iPhone': {'en-US': u"iPhone", 'en-GB': u"iPhone", 'de-DE': u"iPhone-Nummer"},
+    '_$!<Home>!$_': {'en-US': u"home", 'en-GB': u"home", 'de-DE': u"Privatnummer"},
+    '_$!<Work>!$_': {'en-US': u"work", 'en-GB': u"work", 'de-DE': u"Geschäftsnummer"},
+    '_$!<Main>!$_': {'en-US': u"main", 'en-GB': u"main", 'de-DE': u"Hauptnummer"},
+    '_$!<HomeFAX>!$_': {'en-US': u"home fax", 'en-GB': u"home fax", 'de-DE': u'private Faxnummer'},
+    '_$!<WorkFAX>!$_': {'en-US': u"work fax", 'en-GB': u"work fax", 'de-DE': u"geschäftliche Faxnummer"},
+    '_$!<OtherFAX>!$_': {'en-US': u"_$!<OtherFAX>!$_", 'en-GB': u"_$!<OtherFAX>!$_", 'de-DE': u"_$!<OtherFAX>!$_"},
+    '_$!<Pager>!$_': {'en-US': u"pager", 'en-GB': u"pager", 'de-DE': u"Pagernummer"},
+    '_$!<Other>!$_': {'en-US': u"other phone", 'en-GB': u"other phone", 'de-DE': u"anderes Telefon"}
 }
 
 namesToNumberTypes = {
-'de-DE': {'mobile': "_$!<Mobile>!$_", 'handy': "_$!<Mobile>!$_", 'zuhause': "_$!<Home>!$_", 'privat': "_$!<Home>!$_", 'arbeit': "_$!<Work>!$_"},
-'en-US': {'work': "_$!<Work>!$_",'home': "_$!<Home>!$_", 'mobile': "_$!<Mobile>!$_"}
+    'de-DE': {'mobile': "_$!<Mobile>!$_", 'handy': "_$!<Mobile>!$_", 'zuhause': "_$!<Home>!$_", 'privat': "_$!<Home>!$_", 'arbeit': "_$!<Work>!$_"},
+    'en-US': {'work': "_$!<Work>!$_", 'home': "_$!<Home>!$_", 'mobile': "_$!<Mobile>!$_"},
+    'en-GB': {'work': "_$!<Work>!$_", 'home': "_$!<Home>!$_", 'mobile': "_$!<Mobile>!$_"}
 }
 
-speakableDemitter={
-'en-US': u", or ",
-'de-DE': u', oder '}
-
-errorNumberTypes= {
-'de-DE': u"Ich habe dich nicht verstanden, versuch es bitte noch einmal.",
-'en-US': u"Sorry, I did not understand, please try again."
+speakableDemitter = {
+    'en-US': u", or ",
+    'en-GB': u", or ",
+    'de-DE': u', oder '
 }
 
-errorNumberNotPresent= {
-'de-DE': u"Ich habe diese {0} von {1} nicht, aber eine andere.",
-'en-US': u"Sorry, I don't have a {0} number from {1}, but another."
+errorNumberTypes = {
+    'de-DE': u"Ich habe dich nicht verstanden, versuch es bitte noch einmal.",
+    'en-US': u"Sorry, I did not understand, please try again.",
+    'en-GB': u"Sorry, I didn't quite catch that, please try again."
 }
 
-errorOnCallResponse={'en-US':
-                     [{'dialogIdentifier':u"PhoneCall#airplaneMode",
-                       'text': u"Your phone is in airplane mode.",
-                       'code': 1201},
-                      {'dialogIdentifier': u"PhoneCall#networkUnavailable",
-                       'text': u"Uh, I can't seem to find a good connection. Please try your phone call again when you have cellular access.",
-                       'code': 1202},
-                      {'dialogIdentifier': u"PhoneCall#invalidNumber",
-                       'text': u"Sorry, I can't call this number.",
-                       'code': 1203},
-                      {'dialogIdentifier': u"PhoneCall#fatalResponse",
-                       'text': u"Oh oh, I can't make your phone call.",
-                       'code': -1}],
-                     'de-DE':
-                     [{'dialogIdentifier':u"PhoneCall#airplaneMode",
-                       'text': u"Dein Telefon ist im Flugmodus.",
-                       'code': 1201},
-                      {'dialogIdentifier': u"PhoneCall#networkUnavailable",
-                       'text': u"Oh je! Ich kann im Moment keine gute Verbindung bekommen. Versuch es noch einmal, wenn du wieder Funkempfang hast.",
-                       'code': 1202},
-                      {'dialogIdentifier': u"PhoneCall#invalidNumber",
-                       'text': u"Ich kann diese Nummer leider nicht anrufen.",
-                       'code': 1203},
-                      {'dialogIdentifier': u"PhoneCall#fatalResponse",
-                       'text': u"Tut mir leid, Ich, ich kann momentan keine Anrufe t�tigen.",
-                       'code': -1}]
+errorNumberNotPresent = {
+    'de-DE': u"Ich habe diese {0} von {1} nicht, aber eine andere.",
+    'en-US': u"Sorry, I don't have a {0} number from {1}, but another.",
+    'en-GB': u"Sorry, I don't have a {0} number from {1}."
 }
+
+errorOnCallResponse = {
+    'en-US': [
+        {
+            'dialogIdentifier': u"PhoneCall#airplaneMode",
+            'text': u"Your phone is in airplane mode.",
+            'code': 1201
+        },
+        {
+            'dialogIdentifier': u"PhoneCall#networkUnavailable",
+            'text': u"Uh, I can't seem to find a good connection. Please try your phone call again when you have cellular access.",
+            'code': 1202
+        },
+        {
+            'dialogIdentifier': u"PhoneCall#invalidNumber",
+            'text': u"Sorry, I can't call this number.",
+            'code': 1203
+        },
+        {
+            'dialogIdentifier': u"PhoneCall#fatalResponse",
+            'text': u"Oh oh, I can't make your phone call.",
+            'code': -1
+        }
+    ],
+    'en-GB': [
+        {
+            'dialogIdentifier': u"PhoneCall#airplaneMode",
+            'text': u"I'm afraid I can't make calls in aeroplane mode.",
+            'code': 1201
+        },
+        {
+            'dialogIdentifier': u"PhoneCall#networkUnavailable",
+            'text': u"Sorry, I can't get a good signal, please try again when you are in an area with better reception.",
+            'code': 1202
+        },
+        {
+            'dialogIdentifier': u"PhoneCall#invalidNumber",
+            'text': u"Unfortunately the number is not valid.",
+            'code': 1203
+        },
+        {
+            'dialogIdentifier': u"PhoneCall#fatalResponse",
+            'text': u"Something went wrong, and I cannot make your call.",
+            'code': -1
+        }
+    ],
+    'de-DE': [
+        {
+            'dialogIdentifier':u"PhoneCall#airplaneMode",
+            'text': u"Dein Telefon ist im Flugmodus.",
+            'code': 1201
+        },
+        {
+            'dialogIdentifier': u"PhoneCall#networkUnavailable",
+            'text': u"Oh je! Ich kann im Moment keine gute Verbindung bekommen. Versuch es noch einmal, wenn du wieder Funkempfang hast.",
+            'code': 1202
+        },
+        {
+            'dialogIdentifier': u"PhoneCall#invalidNumber",
+            'text': u"Ich kann diese Nummer leider nicht anrufen.",
+            'code': 1203
+        },
+        {
+            'dialogIdentifier': u"PhoneCall#fatalResponse",
+            'text': u"Tut mir leid, Ich, ich kann momentan keine Anrufe t�tigen.",
+            'code': -1
+        }
+    ]
+}
+
 
 class phonecallPlugin(Plugin):
 
     def searchUserByName(self, personToLookup):
-        search = PersonSearch(self.refId)
-        search.scope = PersonSearch.ScopeLocalValue
+        search = ABPersonSearch(self.refId)
+        search.scope = ABPersonSearch.ScopeLocalValue
         search.name = personToLookup
         answerObj = self.getResponseForRequest(search)
-        if ObjectIsCommand(answerObj, PersonSearchCompleted):
-            answer = PersonSearchCompleted(answerObj)
+        if ObjectIsCommand(answerObj, ABPersonSearchCompleted):
+            answer = ABPersonSearchCompleted(answerObj)
             return answer.results if answer.results != None else []
         else:
             raise StopPluginExecution("Unknown response: {0}".format(answerObj))
         return []
-           
+
     def getNumberTypeForName(self, name, language):
         # q&d
         if name != None:
@@ -121,8 +180,8 @@ class phonecallPlugin(Plugin):
                     if numberTypesLocalized[key][language].lower() == name.lower():
                         return numberTypesLocalized[key][language]
         return name
-    
-    def findPhoneForNumberType(self, person, numberType, language):         
+
+    def findPhoneForNumberType(self, person, numberType, language):
         # first check if a specific number was already requested
         phoneToCall = None
         if numberType != None:
@@ -143,8 +202,8 @@ class phonecallPlugin(Plugin):
                 while(phoneToCall == None):
                     rootView = AddViews(self.refId, temporary=False, dialogPhase="Clarification", scrollToTop=False, views=[])
                     sayit = responses['selectNumber'][language].format(person.fullName)
-                    rootView.views.append(AssistantUtteranceView(text=sayit, speakableText=sayit, listenAfterSpeaking=True,dialogIdentifier="ContactDataResolutionDucs#foundAmbiguousPhoneNumberForContact"))
-                    lst = DisambiguationList(items=[], speakableSelectionResponse="OK...", listenAfterSpeaking=True, speakableText="", speakableFinalDemitter=speakableDemitter[language], speakableDemitter=", ",selectionResponse="OK...")
+                    rootView.views.append(AssistantUtteranceView(text=sayit, speakableText=sayit, listenAfterSpeaking=True, dialogIdentifier="ContactDataResolutionDucs#foundAmbiguousPhoneNumberForContact"))
+                    lst = DisambiguationList(items=[], speakableSelectionResponse="OK...", listenAfterSpeaking=True, speakableText="", speakableFinalDemitter=speakableDemitter[language], speakableDemitter=", ", selectionResponse="OK...")
                     rootView.views.append(lst)
                     for phone in person.phones:
                         numberType = numberTypesLocalized[phone.label][language] if phone.label in numberTypesLocalized else phone.label
@@ -167,29 +226,28 @@ class phonecallPlugin(Plugin):
                     else:
                         self.say(errorNumberTypes[language])
         return phoneToCall
-             
-    
+
     def call(self, phone, person, language):
         root = ResultCallback(commands=[])
         rootView = AddViews("", temporary=False, dialogPhase="Completion", views=[])
         root.commands.append(rootView)
         rootView.views.append(AssistantUtteranceView(text=responses['callPerson'][language].format(person.fullName, numberTypesLocalized[phone.label][language], phone.number), speakableText=responses['callPersonSpeak'][language].format(person.fullName, numberTypesLocalized[phone.label][language]), dialogIdentifier="PhoneCall#initiatePhoneCall", listenAfterSpeaking=False))
         rootView.callbacks = []
-        
+
         # create some infos of the target
-        personAttribute=PersonAttribute(data=phone.number, displayText=person.fullName, obj=Person())
+        personAttribute = PersonAttribute(data=phone.number, displayText=person.fullName, obj=Person())
         personAttribute.object.identifer = person.identifier
         call = PhoneCall("", recipient=phone.number, faceTime=False, callRecipient=personAttribute)
-        
+
         rootView.callbacks.append(ResultCallback(commands=[call]))
-        
+
         call.callbacks = []
         # now fill in error messages (airplanemode, no service, invalidNumber, fatal)
         for i in range(4):
             errorRoot = AddViews(None, temporary=False, dialogPhase="Completion", scrollToTop=False, views=[])
             errorRoot.views.append(AssistantUtteranceView(text=errorOnCallResponse[language][i]['text'], speakableText=errorOnCallResponse[language][i]['text'], dialogIdentifier=errorOnCallResponse[language][i]['dialogIdentifier'], listenAfterSpeaking=False))
             call.callbacks.append(ResultCallback(commands=[errorRoot], code=errorOnCallResponse[language][i]['code']))
-            
+
         self.complete_request([root])
 
     def presentPossibleUsers(self, persons, language):
@@ -202,9 +260,10 @@ class phonecallPlugin(Plugin):
             item.commands.append(SendCommands([StartRequest(False, "^phoneCallContactId^=^urn:ace:{0}".format(person.identifier))]))
             lst.items.append(item)
         return root
-    
+
     @register("de-DE", "ruf. (?P<name>[\w ]+?)( (?P<type>arbeit|zuhause|privat|mobil|handy.*|iPhone.*|pager))? an$")
     @register("en-US", "(make a )?call (to )?(?P<name>[\w ]+?)( (?P<type>work|home|mobile|main|iPhone|pager))?$")
+    @register("en-GB", "(make a )?call (to )?(?P<name>[\w ]+?)( (?P<type>work|home|mobile|main|iPhone|pager))?$")
     def makeCall(self, speech, language, regex):
         personToCall = regex.group('name')
         numberType = str.lower(regex.group('type')) if type in regex.groupdict() else None
@@ -231,10 +290,9 @@ class phonecallPlugin(Plugin):
                     if personToCall == None:
                         # we obviously did not understand him.. but probably he refined his request... call again...
                         self.say(errorNumberTypes[language])
-                    
+
             if personToCall != None:
                 self.call(self.findPhoneForNumberType(personToCall, numberType, language), personToCall, language)
-                return # complete_request is done there
-        self.say(responses['notFound'][language])                         
+                return  # complete_request is done there
+        self.say(responses['notFound'][language])
         self.complete_request()
-    

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# This is a sms plugin for SiriServerCore  
+# This is a sms plugin for SiriServerCore
 # created by Eichhoernchen
 #
 # This file is free for private use, you need a commercial license for paid servers
@@ -12,12 +12,12 @@
 # You can view the license here:
 # https://github.com/Eichhoernchen/SiriServerCore/blob/master/LICENSE
 #
-# So if you have a SiriServerCore commercial license 
+# So if you have a SiriServerCore commercial license
 # you are allowed to use this plugin commercially otherwise you are breaking the law
 #
 # This file can be freely modified, but this header must retain untouched
-#  
-# 
+#
+#
 
 from plugin import *
 from siriObjects.baseObjects import ObjectIsCommand
@@ -35,148 +35,197 @@ import random
 #import pytz
 
 responses = {
-'notFound': 
-    {'de-DE': u"Entschuldigung, ich konnte niemanden in deinem Telefonbuch finden der so heißt",
-     'en-US': u"Sorry, I did not find a match in your phone book"
-    },
-'devel':
-    {'de-DE': u"Entschuldigung, aber diese Funktion befindet sich noch in der Entwicklungsphase",
-     'en-US': u"Sorry this feature is still under development"
-    },
- 'select':
-    {'de-DE': u"Wen genau?", 
-     'en-US': u"Which one?"
-    },
-'selectNumber':
-    {'de-DE': u"Welche Telefonnummer für {0}",
-     'en-US': u"Which phone one for {0}"
-    },
-'mustRepeat': 
-    {'de-DE': [u"Entschuldigung ich hab dich leider nicht verstanden."],
-     'en-US': [u"Sorry, I did not understand, please try again", u"Sorry, I don't know what you want"]
-     },
-'askForMessage':
-    {'de-DE': [u"Was willst du schreiben?", u"Was soll drin stehen?", u"Du kannst mir jetzt diktieren!"],
-     'en-US': [u"What do you want to say?", u"What do you want to include in the message?", u"Please dictate me the contents!"]
-     },
-'showUpdate': 
-    {'de-DE': [u"Ich hab deine Nachricht geschrieben. Willst du sie jetzt senden?", u"OK. Willst du die Nachricht jetzt senden?"],
-     'en-US': [u"I updated your message. Ready to send it?", u"Ok, I got that, do you want to send it?", u"Thanks, do you want to send it now?"]
-     },
-'cancelSms': 
-    {'de-DE': [u"OK, I schick sie nicht.", u"OK, ich hab sie verworfen"],
-     'en-US': [u"OK, I won't send it.", u"OK, I deleted it."]
-     },
-'cancelFail':
-    {'de-DE': [u"Sorry, aber mir ist ein Fehler beim Abbrechen passiert"],
-     'en-US': [u"Sorry I could not properly cancel your message"]
-     },
-'createSmsFail':
-    {'de-DE': [u"Ich konnte keine neue Nachricht anlegen, sorry"],
-     'en-US': [u"I could not create a new message, sorry!"]
-     },
-'updateSmsFail':
-    {'de-DE': [u"Entschuldigung ich konnte die Nachricht nicht schreiben"],
-     'en-US': [u"Sorry, I could not update your message!"]
-     },
-'sendSms':
-    {'de-DE': [u"OK, ich verschicke die Nachricht"],
-     'en-US': [u"OK, I'll send your message."]
-     },
-'sendSmsFail':
-    {'de-DE': [u"Umpf da ist was schief gelaufen, sorry"],
-     'en-US': [u"Hm something gone wrong, I could not send the message, I'm very sorry"]
-     },
-'clarification':
-    {'de-DE': [u"Fortfahren mit senden, abbrechen, anschauen oder ändern."],
-     'en-US': [u"To continue, you can Send, Cancel, Review, or Change it."]
-     }
+    'notFound':
+        {
+        'de-DE': u"Entschuldigung, ich konnte niemanden in deinem Telefonbuch finden der so heißt",
+        'en-US': u"Sorry, I did not find a match in your phone book",
+        'en-GB': u"Sorry, I could not find a match in your phone book"
+        },
+    'devel':
+        {
+        'de-DE': u"Entschuldigung, aber diese Funktion befindet sich noch in der Entwicklungsphase",
+        'en-US': u"Sorry this feature is still under development",
+        'en-GB': u"Sorry, this feature is still under development"
+        },
+     'select':
+        {
+        'de-DE': u"Wen genau?",
+        'en-US': u"Which one?",
+        'en-GB': u"Which one?"
+        },
+    'selectNumber':
+        {
+        'de-DE': u"Welche Telefonnummer für {0}",
+        'en-US': u"Which phone one for {0}",
+        'en-GB': u"Which phone number for {0}"
+        },
+    'mustRepeat':
+        {
+        'de-DE': [u"Entschuldigung ich hab dich leider nicht verstanden."],
+        'en-US': [u"Sorry, I did not understand, please try again", u"Sorry, I don't know what you want"],
+        'en-GB': [u"Sorry, I didn't quite catch that, please try again.", u"Sorry, I'm not really sure what you want."]
+        },
+    'askForMessage':
+        {
+        'de-DE': [u"Was willst du schreiben?", u"Was soll drin stehen?", u"Du kannst mir jetzt diktieren!"],
+        'en-US': [u"What do you want to say?", u"What do you want to include in the message?", u"Please dictate me the contents!"],
+        'en-GB': [u"What would you like to say?", u"What do you want to include in your message?", u"Please dictate your message to me."]
+        },
+    'showUpdate':
+        {
+        'de-DE': [u"Ich hab deine Nachricht geschrieben. Willst du sie jetzt senden?", u"OK. Willst du die Nachricht jetzt senden?"],
+        'en-US': [u"I updated your message. Ready to send it?", u"Ok, I got that, do you want to send it?", u"Thanks, do you want to send it now?"],
+        'en-GB': [u"I have updated you message. Are you ready to send it?", u"Okay, got it. Would you like to send it?", u"Thanks, would you like to send it now?"]
+        },
+    'cancelSms':
+        {
+        'de-DE': [u"OK, I schick sie nicht.", u"OK, ich hab sie verworfen"],
+        'en-US': [u"OK, I won't send it.", u"OK, I deleted it."],
+        'en-GB': [u"Consider it cancelled.", u"Okay, I won't send it"]
+        },
+    'cancelFail':
+        {
+        'de-DE': [u"Sorry, aber mir ist ein Fehler beim Abbrechen passiert"],
+        'en-US': [u"Sorry I could not properly cancel your message"],
+        'en-GB': [u"Sorry, I was unable to cancel your message."]
+        },
+    'createSmsFail':
+        {
+        'de-DE': [u"Ich konnte keine neue Nachricht anlegen, sorry"],
+        'en-US': [u"I could not create a new message, sorry!"],
+        'en-GB': [u"Sorry, I was unable to create a new message."]
+        },
+    'updateSmsFail':
+        {
+        'de-DE': [u"Entschuldigung ich konnte die Nachricht nicht schreiben"],
+        'en-US': [u"Sorry, I could not update your message!"],
+        'en-GB': [u"Unfortunately I failed to update your message."]
+        },
+    'sendSms':
+        {
+        'de-DE': [u"OK, ich verschicke die Nachricht"],
+        'en-US': [u"OK, I'll send your message."],
+        'en-GB': [u"Consider it sent."]
+        },
+    'sendSmsFail':
+        {
+        'de-DE': [u"Umpf da ist was schief gelaufen, sorry"],
+        'en-US': [u"Hm something gone wrong, I could not send the message, I'm very sorry"],
+        'en-GB': [u"Something has gone wrong and I have been unable to send your message. Apologies."]
+        },
+    'clarification':
+        {
+        'de-DE': [u"Fortfahren mit senden, abbrechen, anschauen oder ändern."],
+        'en-US': [u"To continue, you can Send, Cancel, Review, or Change it."],
+        'en-GB': [u"To continue, you can send, cancel, review or change your message."]
+        }
 }
 
 questions = {
-'answerSEND': 
-    {'de-DE': ['yes', 'senden'], # you must include yes
-     'en-US': ['yes', 'send']
+'answerSEND':
+    {
+    'de-DE': ['yes', 'senden'],  # you must include yes
+    'en-US': ['yes', 'send'],
+    'en-GB': ['yes', 'send']
      },
 'answerCANCEL':
-    {'de-DE': ['cancel', 'abbrechen', 'stop', 'nein'],  # you must include cancel
-     'en-US': ['cancel', 'no', 'abort']
+    {
+    'de-DE': ['cancel', 'abbrechen', 'stop', 'nein'],  # you must include cancel
+    'en-US': ['cancel', 'no', 'abort'],
+    'en-GB': ['cancel', 'no', 'abort']
      },
 'answerUPDATE':
-    {'de-DE': ['ändern', 'verändern'],
-     'en-US': ['change', 'update']
+    {
+    'de-DE': ['ändern', 'verändern'],
+    'en-US': ['change', 'update'],
+    'en-GB': ['change', 'update']
      },
 'answerREVIEW':
-    {'de-DE': ['anschauen', 'zeigen', 'zeig'],
-     'en-US': ['review', 'view']
+    {
+    'de-DE': ['anschauen', 'zeigen', 'zeig'],
+    'en-US': ['review', 'view'],
+    'en-GB': ['review', 'view']
      }
 }
 
 snippetButtons = {
 'denyText':
-    {'de-DE': "Cancel",
-     'en-US': "Cancel"
+    {
+    'de-DE': "Cancel",
+    'en-US': "Cancel",
+    'en-GB': "Cancel"
      },
 'cancelLabel':
-    {'de-DE': "Cancel",
-     'en-US': "Cancel"
+    {
+    'de-DE': "Cancel",
+    'en-US': "Cancel",
+    'en-GB': "Cancel"
      },
 'submitLabel':
-    {'de-DE': "Send",
-     'en-US': "Send"
+    {
+    'de-DE': "Send",
+    'en-US': "Send",
+    'en-GB': "Send"
      },
 'confirmText':
-    {'de-DE': "Send",
-     'en-US': "Send"
+    {
+    'de-DE': "Send",
+    'en-US': "Send",
+    'en-GB': "Send"
      },
 'cancelTrigger':
-    {'de-DE': "Deny",
-     'en-US': "Deny"
+    {
+    'de-DE': "Deny",
+    'en-US': "Deny",
+    'en-GB': "Deny"
      }
 }
 
-speakableDemitter={
-'en-US': u", or ",
-'de-DE': u', oder '}
-
-
-errorNumberTypes= {
-'de-DE': u"Ich habe dich nicht verstanden, versuch es bitte noch einmal.",
-'en-US': u"Sorry, I did not understand, please try again."
-}
-
-errorNumberNotPresent= {
-'de-DE': u"Ich habe diese {0} von {1} nicht, aber eine andere.",
-'en-US': u"Sorry, I don't have a {0} number from {1}, but another."
-}
-
-
-numberTypesLocalized= {
-'_$!<Mobile>!$_': {'en-US': u"mobile", 'de-DE': u"Handynummer"},
-'iPhone': {'en-US': u"iPhone", 'de-DE': u"iPhone-Nummer"},
-'_$!<Home>!$_': {'en-US': u"home", 'de-DE': u"Privatnummer"},
-'_$!<Work>!$_': {'en-US': u"work", 'de-DE': u"Geschäftsnummer"},
-'_$!<Main>!$_': {'en-US': u"main", 'de-DE': u"Hauptnummer"},
-'_$!<HomeFAX>!$_': {'en-US': u"home fax", 'de-DE': u'private Faxnummer'},
-'_$!<WorkFAX>!$_': {'en-US': u"work fax", 'de-DE': u"geschäftliche Faxnummer"},
-'_$!<OtherFAX>!$_': {'en-US': u"_$!<OtherFAX>!$_", 'de-DE': u"_$!<OtherFAX>!$_"},
-'_$!<Pager>!$_': {'en-US': u"pager", 'de-DE': u"Pagernummer"},
-'_$!<Other>!$_':{'en-US': u"other phone", 'de-DE': u"anderes Telefon"}
+numberTypesLocalized = {
+    '_$!<Mobile>!$_': {'en-US': u"mobile", 'en-GB': u"mobile", 'de-DE': u"Handynummer"},
+    'iPhone': {'en-US': u"iPhone", 'en-GB': u"iPhone", 'de-DE': u"iPhone-Nummer"},
+    '_$!<Home>!$_': {'en-US': u"home", 'en-GB': u"home", 'de-DE': u"Privatnummer"},
+    '_$!<Work>!$_': {'en-US': u"work", 'en-GB': u"work", 'de-DE': u"Geschäftsnummer"},
+    '_$!<Main>!$_': {'en-US': u"main", 'en-GB': u"main", 'de-DE': u"Hauptnummer"},
+    '_$!<HomeFAX>!$_': {'en-US': u"home fax", 'en-GB': u"home fax", 'de-DE': u'private Faxnummer'},
+    '_$!<WorkFAX>!$_': {'en-US': u"work fax", 'en-GB': u"work fax", 'de-DE': u"geschäftliche Faxnummer"},
+    '_$!<OtherFAX>!$_': {'en-US': u"_$!<OtherFAX>!$_", 'en-GB': u"_$!<OtherFAX>!$_", 'de-DE': u"_$!<OtherFAX>!$_"},
+    '_$!<Pager>!$_': {'en-US': u"pager", 'en-GB': u"pager", 'de-DE': u"Pagernummer"},
+    '_$!<Other>!$_': {'en-US': u"other phone", 'en-GB': u"other phone", 'de-DE': u"anderes Telefon"}
 }
 
 namesToNumberTypes = {
-'de-DE': {'mobile': "_$!<Mobile>!$_", 'handy': "_$!<Mobile>!$_", 'zuhause': "_$!<Home>!$_", 'privat': "_$!<Home>!$_", 'arbeit': "_$!<Work>!$_"},
-'en-US': {'work': "_$!<Work>!$_",'home': "_$!<Home>!$_", 'mobile': "_$!<Mobile>!$_"}
+    'de-DE': {'mobile': "_$!<Mobile>!$_", 'handy': "_$!<Mobile>!$_", 'zuhause': "_$!<Home>!$_", 'privat': "_$!<Home>!$_", 'arbeit': "_$!<Work>!$_"},
+    'en-US': {'work': "_$!<Work>!$_", 'home': "_$!<Home>!$_", 'mobile': "_$!<Mobile>!$_"},
+    'en-GB': {'work': "_$!<Work>!$_", 'home': "_$!<Home>!$_", 'mobile': "_$!<Mobile>!$_"}
 }
 
+speakableDemitter = {
+    'en-US': u", or ",
+    'en-GB': u", or ",
+    'de-DE': u', oder '
+}
+
+errorNumberTypes = {
+    'de-DE': u"Ich habe dich nicht verstanden, versuch es bitte noch einmal.",
+    'en-US': u"Sorry, I did not understand, please try again.",
+    'en-GB': u"Sorry, I didn't quite catch that, please try again."
+}
+
+errorNumberNotPresent = {
+    'de-DE': u"Ich habe diese {0} von {1} nicht, aber eine andere.",
+    'en-US': u"Sorry, I don't have a {0} number from {1}, but another.",
+    'en-GB': u"Sorry, I don't have a {0} number from {1}."
+}
+
+
 class shortMessaging(Plugin):
-    
+
     def finalSend(self, sms, language):
-        
         commitCMD = DomainObjectCommit(self.refId)
         commitCMD.identifier = SmsSms()
         commitCMD.identifier.identifier = sms.identifier
-        
+
         answer = self.getResponseForRequest(commitCMD)
         if ObjectIsCommand(answer, DomainObjectCommitCompleted):
             answer = DomainObjectCommitCompleted(answer)
@@ -187,71 +236,69 @@ class shortMessaging(Plugin):
             # get the timezone from the assistant
             # and supply it to pytz which we can
             # supply to now()
-            sms.dateSent = datetime.datetime.now() 
+            sms.dateSent = datetime.datetime.now()
             # tell the user we sent the sms
             createAnchor = UIAddViews(self.refId)
             createAnchor.dialogPhase = createAnchor.DialogPhaseConfirmedValue
-            
+
             # create a view to ask for the message
             askCreateView = UIAssistantUtteranceView()
             askCreateView.dialogIdentifier = "CreateSms#sentSMS"
             askCreateView.text = askCreateView.speakableText = random.choice(responses['sendSms'][language])
             askCreateView.listenAfterSpeaking = False
-            
-           
+
             snippet = SmsSnippet()
             snippet.smss = [sms]
-            
+
             createAnchor.views = [askCreateView, snippet]
-            
+
             self.sendRequestWithoutAnswer(createAnchor)
             self.complete_request()
         else:
             self.say(random.choice(responses['sendSmsFail'][language]))
             self.complete_request()
-            
-            
+
     def createSmsSnippet(self, sms, addConfirmationOptions, dialogIdentifier, text, language):
         createAnchor = UIAddViews(self.refId)
         createAnchor.dialogPhase = createAnchor.DialogPhaseConfirmationValue
-        
+
         # create a view to ask for the message
         askCreateView = UIAssistantUtteranceView()
         askCreateView.dialogIdentifier = dialogIdentifier
         askCreateView.text = askCreateView.speakableText = text
         askCreateView.listenAfterSpeaking = True
-        
+
         # create a snippet for the sms
         snippet = SmsSnippet()
         if addConfirmationOptions:
             # create some confirmation options
             conf = UIConfirmSnippet({})
             conf.requestId = self.refId
-            
+
             confOpts = UIConfirmationOptions()
             confOpts.submitCommands = [SendCommands([conf, StartRequest(False, "^smsConfirmation^=^yes^")])]
             confOpts.confirmCommands = confOpts.submitCommands
-            
+
             cancel = UICancelSnippet({})
             cancel.requestId = self.refId
-            
+
             confOpts.cancelCommands = [SendCommands([cancel, StartRequest(False, "^smsConfirmation^=^cancel^")])]
             confOpts.denyCommands = confOpts.cancelCommands
-            
+
             confOpts.denyText = snippetButtons['denyText'][language]
             confOpts.cancelLabel = snippetButtons['cancelLabel'][language]
             confOpts.submitLabel = snippetButtons['submitLabel'][language]
             confOpts.confirmText = snippetButtons['confirmText'][language]
             confOpts.cancelTrigger = snippetButtons['cancelTrigger'][language]
-            
+
             snippet.confirmationOptions = confOpts
-            
+
         snippet.smss = [sms]
-        
+
         createAnchor.views = [askCreateView, snippet]
-        
+
         return createAnchor
-            
+
     def createNewMessage(self, phone, person):
         # create a new domain object the sms...
         x = SmsSms()
@@ -272,7 +319,7 @@ class shortMessaging(Plugin):
             return x
         else:
             return None
-        
+
     def getSmssForIdentifier(self, identifier):
         # fetch the current version
         retrieveCMD = DomainObjectRetrieve(self.refId)
@@ -289,42 +336,42 @@ class shortMessaging(Plugin):
             return result
         else:
             return None
-        
+
     def askAndSetMessage(self, sms, language):
         createAnchor = self.createSmsSnippet(sms, False, "CreateSms#smsMissingMessage", random.choice(responses['askForMessage'][language]), language)
 
         smsText = self.getResponseForRequest(createAnchor)
         # update the domain object
-        
+
         updateCMD = DomainObjectUpdate(self.refId)
         updateCMD.identifier = sms
         updateCMD.addFields = SmsSms()
         updateCMD.setFields = SmsSms()
         updateCMD.setFields.message = smsText
         updateCMD.removeFields = SmsSms()
-        
+
         answer = self.getResponseForRequest(updateCMD)
         if ObjectIsCommand(answer, DomainObjectUpdateCompleted):
             return sms
         else:
             return None
-            
+
     def showUpdateAndAskToSend(self, sms, language):
         createAnchor = self.createSmsSnippet(sms, True, "CreateSms#updatedMessageBody", random.choice(responses['showUpdate'][language]), language)
-        
+
         response = self.getResponseForRequest(createAnchor)
         match = re.match("\^smsConfirmation\^=\^(?P<answer>.*)\^", response)
         if match:
             response = match.group('answer')
-        
+
         return response
-    
+
     def cancelSms(self, sms, language):
         # cancel the sms
         cancelCMD = DomainObjectCancel(self.refId)
         cancelCMD.identifier = SmsSms()
         cancelCMD.identifier.identifier = sms.identifier
-        
+
         answer = self.getResponseForRequest(cancelCMD)
         if ObjectIsCommand(answer, DomainObjectCancelCompleted):
             createAnchor = UIAddViews(self.refId)
@@ -333,23 +380,23 @@ class shortMessaging(Plugin):
             cancelView.dialogIdentifier = "CreateSms#wontSendSms"
             cancelView.text = cancelView.speakableText = random.choice(responses['cancelSms'][language])
             createAnchor.views = [cancelView]
-            
+
             self.sendRequestWithoutAnswer(createAnchor)
             self.complete_request()
         else:
             self.say(random.choice(responses['cancelFail'][language]))
             self.complete_request()
-    
+
     def askForClarification(self, sms, language):
         createAnchor = self.createSmsSnippet(sms, True, "CreateSms#notReadyToSendSms", random.choice(responses['clarification'][language]), language)
-        
+
         response = self.getResponseForRequest(createAnchor)
         match = re.match("\^smsConfirmation\^=\^(?P<answer>.*)\^", response)
         if match:
             response = match.group('answer')
-            
+
         return response
-        
+
     def message(self, phone, person, language):
         smsObj = self.createNewMessage(phone, person)
         if smsObj == None:
@@ -363,15 +410,15 @@ class shortMessaging(Plugin):
             return
         satisfied = False
         state = "SHOW"
-        
-        # lets define a small state machine 
+
+        # lets define a small state machine
         while not satisfied:
             smsObj = self.getSmssForIdentifier(smsObj.identifier)
             if smsObj == None:
                 self.say(u"Sorry I lost your sms.")
                 self.complete_request()
                 return
-            
+
             if state == "SHOW":
                 instruction = self.showUpdateAndAskToSend(smsObj, language).strip().lower()
                 if any(k in instruction for k in (questions['answerSEND'][language])):
@@ -382,7 +429,7 @@ class shortMessaging(Plugin):
                     continue
                 self.say(random.choice(responses['mustRepeat'][language]))
                 continue
-            
+
             elif state == "WRITE":
                 smsObj = self.askAndSetMessage(smsObj, language)
                 if smsObj == None:
@@ -391,7 +438,7 @@ class shortMessaging(Plugin):
                     return
                 state = "SHOW"
                 continue
-            
+
             elif state == "CLARIFY":
                 instruction = self.askForClarification(smsObj, language).strip().lower()
                 if any(k in instruction for k in (questions['answerSEND'][language])):
@@ -408,17 +455,17 @@ class shortMessaging(Plugin):
                     continue
                 self.say(random.choice(responses['mustRepeat'][language]))
                 continue
-            
+
             elif state == "CANCEL":
                 self.cancelSms(smsObj, language)
                 satisfied = True
                 continue
-            
+
             elif state == "SEND":
                 self.finalSend(smsObj, language)
                 satisfied = True
                 continue
-        
+
     def searchUserByName(self, personToLookup):
         search = PersonSearch(self.refId)
         search.scope = PersonSearch.ScopeLocalValue
@@ -430,8 +477,8 @@ class shortMessaging(Plugin):
         else:
             raise StopPluginExecution("Unknown response: {0}".format(answerObj))
         return []
-        
-    def findPhoneForNumberType(self, person, numberType, language):         
+
+    def findPhoneForNumberType(self, person, numberType, language):
         # first check if a specific number was already requested
         phoneToMessage = None
         if numberType != None:
@@ -452,14 +499,14 @@ class shortMessaging(Plugin):
                 while(phoneToMessage == None):
                     root = UIAddViews(self.refId)
                     root.dialogPhase = root.DialogPhaseClarificationValue
-                    
+
                     utterance = UIAssistantUtteranceView()
                     utterance.dialogIdentifier = "ContactDataResolutionDucs#foundAmbiguousPhoneNumberForContact"
                     utterance.speakableText = utterance.text = responses['selectNumber'][language].format(person.fullName)
                     utterance.listenAfterSpeaking = True
-                    
+
                     root.views = [utterance]
-                    
+
                     lst = UIDisambiguationList()
                     lst.items = []
                     lst.speakableSelectionResponse = "OK!"
@@ -476,7 +523,7 @@ class shortMessaging(Plugin):
                         item.object = phone
                         item.commands = [SendCommands(commands=[StartRequest(handsFree=False, utterance=numberType)])]
                         lst.items.append(item)
-                        
+
                     answer = self.getResponseForRequest(root)
                     numberType = self.getNumberTypeForName(answer, language)
                     if numberType != None:
@@ -488,7 +535,7 @@ class shortMessaging(Plugin):
                     else:
                         self.say(errorNumberTypes[language])
         return phoneToMessage
-    
+
     def getNumberTypeForName(self, name, language):
         # q&d
         if name != None:
@@ -499,17 +546,17 @@ class shortMessaging(Plugin):
                     if numberTypesLocalized[key][language].lower() == name.lower():
                         return numberTypesLocalized[key][language]
         return name
-        
+
     def presentPossibleUsers(self, persons, language):
         root = UIAddViews(self.refId)
         root.dialogPhase = root.DialogPhaseClarificationValue
         utterance = UIAssistantUtteranceView()
         utterance.dialogIdentifier = "ContactDataResolutionDucs#disambiguateContact"
         utterance.text = responses['select'][language]
-        utterance.speakableText = responses['select'][language] 
+        utterance.speakableText = responses['select'][language]
         utterance.listenAfterSpeaking = True
         root.views = [utterance]
-        # create a list with all the possibilities 
+        # create a list with all the possibilities
         lst = UIDisambiguationList()
         lst.items = []
         lst.speakableSelectionResponse = "OK!"
@@ -518,14 +565,14 @@ class shortMessaging(Plugin):
         root.views.append(lst)
         for person in persons:
             item = UIListItem()
-            item.object = person 
+            item.object = person
             item.selectionResponse = person.fullName
             item.selectionText = person.fullName
             item.title = person.fullName
             item.commands = [SendCommands([StartRequest(False, "^phoneCallContactId^=^urn:ace:{0}".format(person.identifier))])]
             lst.items.append(item)
         return root
-    
+
     @register("en-US", "(Write|Send)( a)?( new)? (message|sms) to (?P<recipient>[\w ]+?)$")
     @register("de-DE", "(Sende|Schreib.)( eine)?( neue)? (Nachricht|sms) an (?P<recipient>[\w ]+?)$")
     def sendSMS(self, speech, lang, regex):
@@ -552,10 +599,9 @@ class shortMessaging(Plugin):
                     if personToMessage == None:
                         # we obviously did not understand him.. but probably he refined his request... call again...
                         self.say(errorNumberTypes[lang])
-                    
+
             if personToMessage != None:
                 self.message(self.findPhoneForNumberType(personToMessage, None, lang), personToMessage, lang)
-                return # complete_request is done there
-        self.say(responses['notFound'][lang])                         
+                return  # complete_request is done there
+        self.say(responses['notFound'][lang])
         self.complete_request()
-        
