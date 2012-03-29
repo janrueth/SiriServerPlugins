@@ -483,7 +483,7 @@ class yahooWeather(Plugin):
             return
         
         # they change the language code using the other forecast link..
-        weatherLocation = self.getWeatherLocation(woeid, result)
+        weatherLocation = None
         
         match = idFinder.search(item.find("link").text)
         if match != None:
@@ -496,6 +496,9 @@ class yahooWeather(Plugin):
                 item = result.find("channel/item")
             except:
                 pass
+        
+        if weatherLocation == None:
+            weatherLocation = self.getWeatherLocation(woeid, result)
         
         if item is None:
             self.say(random.choice(noDataForLocationText[language]))
