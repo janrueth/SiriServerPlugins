@@ -19,16 +19,16 @@ What plugins are available?
 ---------------------------
 At the moment there are:
 
-* Phone Call Plugin:
+* **Phone Call Plugin**:
   This allows you making phonecalls using your voice
   
-* Short Message Plugin:
+* **Short Message Plugin**:
   This allows you to create short messages which you can send and compose via voice
   
-* Yahoo Weather Plugin:
+* **Yahoo Weather Plugin**:
   This plugin gives you weather forecasts of your current location or any other location.
 
-* RequestHandler Plugin:
+* **RequestHandler Plugin**:
   This plugin enables you to react on search button presses if something was not recognized by SiriServer.
   It will probably be extended to other delayed requests that might be handeled in the future.
 
