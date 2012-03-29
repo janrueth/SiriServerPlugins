@@ -505,41 +505,42 @@ class yahooWeather(Plugin):
             self.complete_request()
             return
         
-        dailyForecasts = []
-        for forecast in result.findall("channel/item/{0}forecast".format(yweather)):
-            weatherDaily = WeatherDailyForecast()
-            weatherDaily.timeIndex = appleWeek[forecast.get("day")]
-            weatherDaily.lowTemperature = int(forecast.get("low"))
-            weatherDaily.highTemperature = int(forecast.get("high"))
-            weatherDaily.isUserRequested = True
-            dailyCondition = WeatherCondition()
-            dailyCondition.conditionCodeIndex = int(forecast.get("code"))
-            dailyCondition.conditionCode = dailyCondition.ConditionCodeIndexTable[dailyCondition.conditionCodeIndex]
-            weatherDaily.condition = dailyCondition
-            dailyForecasts.append(weatherDaily)
-        
-        forcast = WeatherObject()
-        forcast.currentConditions = self.getWeatherCurrentConditions(result)
-        if forcast.currentConditions == None:
+        forecast = WeatherObject()
+        forecast.currentConditions = self.getWeatherCurrentConditions(result)
+        if forecast.currentConditions == None:
             self.say(random.choice(noDataForLocationText[language]))
             self.complete_request()
             return
         
-        forcast.dailyForecasts = dailyForecasts
-        forcast.extendedForecastUrl = item.find("link").text
-        forcast.units = self.getWeatherUnits(result)
-        forcast.view = forcast.ViewDAILYValue
-        forcast.weatherLocation = weatherLocation
+        forecast.extendedForecastUrl = item.find("link").text
+        forecast.units = self.getWeatherUnits(result)
+        forecast.view = forecast.ViewDAILYValue
+        forecast.weatherLocation = weatherLocation
+        forecast.hourlyForecasts = []
         
+        dailyForecasts = []
+        for dailyForecast in result.findall("channel/item/{0}forecast".format(yweather)):
+            weatherDaily = WeatherDailyForecast()
+            weatherDaily.timeIndex = appleWeek[dailyForecast.get("day")]
+            weatherDaily.lowTemperature = int(dailyForecast.get("low"))
+            weatherDaily.highTemperature = int(dailyForecast.get("high"))
+            weatherDaily.isUserRequested = True
+            dailyCondition = WeatherCondition()
+            dailyCondition.conditionCodeIndex = int(dailyForecast.get("code"))
+            dailyCondition.conditionCode = dailyCondition.ConditionCodeIndexTable[dailyCondition.conditionCodeIndex]
+            weatherDaily.condition = dailyCondition
+            dailyForecasts.append(weatherDaily)
+    
+        forecast.dailyForecasts = dailyForecasts
         snippet = WeatherForecastSnippet()
-        snippet.aceWeathers = [forcast]
+        snippet.aceWeathers = [forecast]
         
         showViewsCMD = UIAddViews(self.refId)
         showViewsCMD.dialogPhase = showViewsCMD.DialogPhaseSummaryValue
         displaySnippetTalk = UIAssistantUtteranceView()
         displaySnippetTalk.dialogIdentifier = "Weather#forecastCommentary"
-        countryName = countries[forcast.weatherLocation.countryCode.lower()] if forcast.weatherLocation.countryCode.lower() in countries else forcast.weatherLocation.countryCode
-        displaySnippetTalk.text = displaySnippetTalk.speakableText = random.choice(dailyForcast[language]).format(forcast.weatherLocation.city, countryName)
+        countryName = countries[forecast.weatherLocation.countryCode.lower()] if forecast.weatherLocation.countryCode.lower() in countries else forecast.weatherLocation.countryCode
+        displaySnippetTalk.text = displaySnippetTalk.speakableText = random.choice(dailyForcast[language]).format(forecast.weatherLocation.city, countryName)
         
         showViewsCMD.views = [displaySnippetTalk, snippet]
         
