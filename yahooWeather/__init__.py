@@ -36,9 +36,6 @@ import random
 import urllib
 import urllib2
 
-# obtain the api key for worldweatheronline
-# if no key is there this will kill the plugin loading process and inform user
-yahooAPIkey = APIKeyForAPI("yahoo")
 
 appleWeek = {
 'Sun': 1,
@@ -314,6 +311,9 @@ dailyForcast = {
 
 yweather = "{http://xml.weather.yahoo.com/ns/rss/1.0}"
 geo = "{http://www.w3.org/2003/01/geo/wgs84_pos#}"
+place = "{http://where.yahooapis.com/v1/schema.rng}"
+
+idFinder = re.compile("/(?P<locationID>[A-z0-9_]+).html")
 
 class yahooWeather(Plugin):
     
@@ -332,7 +332,7 @@ class yahooWeather(Plugin):
         self.sendRequestWithoutAnswer(rootAnchor)
     
     
-    def getWeatherLocation(self, woeid, xml):
+    def getWeatherLocation(self, locationId, xml):
         item = xml.find("channel/item")
         location = xml.find("channel/{0}location".format(yweather))
         
@@ -344,7 +344,7 @@ class yahooWeather(Plugin):
         weatherLocation.countryCode = location.get("country")
         weatherLocation.latitude = item.find("{0}lat".format(geo)).text
         weatherLocation.longitude = item.find("{0}long".format(geo)).text
-        weatherLocation.locationId = woeid
+        weatherLocation.locationId = locationId
         weatherLocation.stateCode = location.get("region")
         weatherLocation.accuracy = weatherLocation.AccuracyBestValue
         return weatherLocation
@@ -463,6 +463,7 @@ class yahooWeather(Plugin):
         
 
     def showCurrentWeatherWithWOEID(self, language, woeid, metric = True):
+        # we can only get 2 day weather with woeid that suxx
         weatherLookup = "http://weather.yahooapis.com/forecastrss?w={0}&u={1}".format(woeid, "c" if metric else "f")
         result = None
         try:
@@ -476,6 +477,26 @@ class yahooWeather(Plugin):
         
         #get the item
         item = result.find("channel/item")
+        if item is None:
+            self.say(random.choice(noDataForLocationText[language]))
+            self.complete_request()
+            return
+        
+        # they change the language code using the other forecast link..
+        weatherLocation = self.getWeatherLocation(woeid, result)
+        
+        match = idFinder.search(item.find("link").text)
+        if match != None:
+            loc = match.group('locationID')
+            weatherLocation = self.getWeatherLocation(loc[:-2], result)
+            fiveDayForecast = "http://xml.weather.yahoo.com/forecastrss/{0}.xml".format(loc)
+            try:
+                result = urllib2.urlopen(fiveDayForecast, timeout=5).read()
+                result = ElementTree.XML(result)
+                item = result.find("channel/item")
+            except:
+                pass
+        
         if item is None:
             self.say(random.choice(noDataForLocationText[language]))
             self.complete_request()
@@ -505,7 +526,7 @@ class yahooWeather(Plugin):
         forcast.extendedForecastUrl = item.find("link").text
         forcast.units = self.getWeatherUnits(result)
         forcast.view = forcast.ViewDAILYValue
-        forcast.weatherLocation = self.getWeatherLocation(woeid, result)
+        forcast.weatherLocation = weatherLocation
         
         snippet = WeatherForecastSnippet()
         snippet.aceWeathers = [forcast]
@@ -528,8 +549,9 @@ class yahooWeather(Plugin):
     def forcastWeatherAtLocation(self, speech, language, regex):
         self.showWaitPlease(language)
         location = regex.group("location")
-        
-        lookup = "http://where.yahooapis.com/geocode?location={0}&appid={1}".format(urllib.quote(location.encode("utf-8")), yahooAPIkey)
+        query = "select woeid from geo.places where text=\"{0}\"".format(location)
+        lookup = "http://query.yahooapis.com/v1/public/yql?q={0}&format=xml".format(urllib.quote(query.encode("utf-8")))
+        #lookup = "http://where.yahooapis.com/geocode?location={0}&appid={1}".format(urllib.quote(location.encode("utf-8")), yahooAPIkey)
         result = None
         try:
             result = urllib2.urlopen(lookup, timeout=5).read()
@@ -540,10 +562,10 @@ class yahooWeather(Plugin):
             return
         
         root = ElementTree.XML(result)
-        woeidElem = root.find("Result/woeid")
+        woeidElem = root.find("results/{0}place/{0}woeid".format(place))
         
         if woeidElem is None:
-            self.say(noDataForLocationText[language])
+            self.say(random.choice(noDataForLocationText[language]))
             self.complete_request()
             return
         
@@ -559,7 +581,9 @@ class yahooWeather(Plugin):
         lat = location.latitude
         
         # we need the corresponding WOEID to the location
-        reverseLookup = "http://where.yahooapis.com/geocode?location={0},{1}&gflags=R&appid={2}".format(lat, lng, yahooAPIkey)
+        query = "select woeid from geo.places where text=\"{0},{1}\"".format(lat,lng)
+        reverseLookup = "http://query.yahooapis.com/v1/public/yql?q={0}&format=xml".format(urllib.quote(query.encode("utf-8")))
+        #reverseLookup = "http://where.yahooapis.com/geocode?location={0},{1}&gflags=R&appid={2}".format(lat, lng, yahooAPIkey)
         result = None
         try:
             result = urllib2.urlopen(reverseLookup, timeout=5).read()
@@ -570,12 +594,15 @@ class yahooWeather(Plugin):
             return
         
         root = ElementTree.XML(result)
-        woeidElem = root.find("Result/woeid")
+        woeidElem = root.find("results/{0}place/{0}woeid".format(place))
+        
+        
         
         if woeidElem is None:
-            self.say(noDataForLocationText[language])
+            self.say(random.choice(noDataForLocationText[language]))
             self.complete_request()
             return
+        
         
         self.showCurrentWeatherWithWOEID(language, woeidElem.text)
         
