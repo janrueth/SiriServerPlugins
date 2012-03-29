@@ -159,12 +159,12 @@ errorOnCallResponse = {
 class phonecallPlugin(Plugin):
 
     def searchUserByName(self, personToLookup):
-        search = PersonSearch(self.refId)
-        search.scope = PersonSearch.ScopeLocalValue
+        search = ABPersonSearch(self.refId)
+        search.scope = ABPersonSearch.ScopeLocalValue
         search.name = personToLookup
         answerObj = self.getResponseForRequest(search)
-        if ObjectIsCommand(answerObj, PersonSearchCompleted):
-            answer = PersonSearchCompleted(answerObj)
+        if ObjectIsCommand(answerObj, ABPersonSearchCompleted):
+            answer = ABPersonSearchCompleted(answerObj)
             return answer.results if answer.results != None else []
         else:
             raise StopPluginExecution("Unknown response: {0}".format(answerObj))
