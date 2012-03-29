@@ -33,6 +33,7 @@ from siriObjects.weatherObjects import WeatherHourlyForecast, \
     WeatherForecast, WeatherObject, WeatherLocation, WeatherForecastSnippet
 from xml.etree import ElementTree
 import random
+import urllib
 import urllib2
 
 # obtain the api key for worldweatheronline
@@ -522,8 +523,35 @@ class yahooWeather(Plugin):
         self.complete_request()
         
     
+    @register("en-US", "(what( is|'s) the )?weather(like )? in (?P<location>[\w ]+?)$")
+    @register('de-DE', "(wie ist das )?wetter in (?P<location>[\w ]+?)$")
+    def forcastWeatherAtLocation(self, speech, language, regex):
+        self.showWaitPlease(language)
+        location = regex.group("location")
+        
+        lookup = "http://where.yahooapis.com/geocode?location={0}&appid={1}".format(urllib.quote(location.encode("utf-8")), yahooAPIkey)
+        result = None
+        try:
+            result = urllib2.urlopen(lookup, timeout=5).read()
+        except:
+            print random.choice(errorText[language])
+            self.say(random.choice(errorText[language]))
+            self.complete_request()
+            return
+        
+        root = ElementTree.XML(result)
+        woeidElem = root.find("Result/woeid")
+        
+        if woeidElem is None:
+            self.say(noDataForLocationText[language])
+            self.complete_request()
+            return
+        
+        self.showCurrentWeatherWithWOEID(language, woeidElem.text)
+        
     @register("en-US", "weather|forecast")
-    def currentWeatherAtCurrentLocation(self, speech, language):
+    @register("de-DE", "wetter(vorhersage)?")
+    def forcastWeatherAtCurrentLocation(self, speech, language):
         location = self.getCurrentLocation()
         self.showWaitPlease(language)
         
