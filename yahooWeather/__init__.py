@@ -548,7 +548,7 @@ class yahooWeather(Plugin):
         self.complete_request()
         
     
-    @register("en-US", "(what( is|'s) the )?weather(like )? in (?P<location>[\w ]+?)$")
+    @register("en-US", "(what( is|'s) the )?weather( like)? in (?P<location>[\w ]+?)$")
     @register('de-DE', "(wie ist das )?wetter in (?P<location>[\w ]+?)$")
     def forcastWeatherAtLocation(self, speech, language, regex):
         self.showWaitPlease(language)
