@@ -3,7 +3,7 @@
 
 from plugin import *
 from siriObjects.baseObjects import ObjectIsCommand
-from siriObjects.contactObjects import PersonSearch, PersonSearchCompleted
+from siriObjects.contactObjects import ABPersonSearch, ABPersonSearchCompleted
 from siriObjects.phoneObjects import PhoneCall
 from siriObjects.systemObjects import SendCommands, StartRequest, ResultCallback, \
     Person, PersonAttribute
