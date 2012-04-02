@@ -7,7 +7,6 @@
 #
 # It uses various the services from yahoo
 #
-# You must obtain an API-key to use it
 #
 # This file is free for private use, you need a commercial license for paid servers
 #
@@ -317,6 +316,10 @@ idFinder = re.compile("/(?P<locationID>[A-z0-9_]+).html")
 
 class yahooWeather(Plugin):
     
+    def __init__(self):
+        super(yahooWeather, self).__init__()
+        self.loopcounter = 0
+    
     
     def showWaitPlease(self, language):
         rootAnchor = UIAddViews(self.refId)
@@ -472,7 +475,7 @@ class yahooWeather(Plugin):
             self.say(random.choice(errorText[language]))
             self.complete_request()
             return
-        
+        self.logger.debug(result)
         result = ElementTree.XML(result)
         
         #get the item
@@ -547,31 +550,61 @@ class yahooWeather(Plugin):
         self.sendRequestWithoutAnswer(showViewsCMD)
         self.complete_request()
         
+    def getNameFromGoogle(self, request):
+        try:
+            result = urllib2.urlopen(request, timeout=5).read()
+            root = ElementTree.XML(result)
+            location = root.find("result/formatted_address")
+            location = location.text
+            return location
+        except:
+            return None
     
     @register("en-US", "(what( is|'s) the )?weather( like)? in (?P<location>[\w ]+?)$")
     @register('de-DE', "(wie ist das )?wetter in (?P<location>[\w ]+?)$")
     def forcastWeatherAtLocation(self, speech, language, regex):
         self.showWaitPlease(language)
         location = regex.group("location")
-        query = "select woeid from geo.places where text=\"{0}\"".format(location)
+        # lets refine the location using google
+        googleGuesser = "http://maps.googleapis.com/maps/api/geocode/xml?address={0}&sensor=false&language={1}".format(urllib.quote(location.encode("utf-8")), language)
+        googleLocation = self.getNameFromGoogle(googleGuesser)
+        if googleLocation != None:
+            location = googleLocation
+            
+        query = "select woeid, placeTypeName from geo.places where text=\"{0}\" limit 1".format(location)
         lookup = "http://query.yahooapis.com/v1/public/yql?q={0}&format=xml".format(urllib.quote(query.encode("utf-8")))
         #lookup = "http://where.yahooapis.com/geocode?location={0}&appid={1}".format(urllib.quote(location.encode("utf-8")), yahooAPIkey)
         result = None
         try:
             result = urllib2.urlopen(lookup, timeout=5).read()
         except:
-            print random.choice(errorText[language])
             self.say(random.choice(errorText[language]))
             self.complete_request()
             return
         
         root = ElementTree.XML(result)
+        placeTypeCode = root.find("results/{0}place/{0}placeTypeName".format(place))
         woeidElem = root.find("results/{0}place/{0}woeid".format(place))
         
-        if woeidElem is None:
+        if woeidElem is None or placeTypeCode is None:
             self.say(random.choice(noDataForLocationText[language]))
             self.complete_request()
             return
+        
+        if placeTypeCode.get("code") != "7": #damn is this not a city
+            # lets ask google what it think
+            googleCapitalResolver = "http://maps.googleapis.com/maps/api/geocode/xml?address=capital%20of%20{0}&sensor=false&language={1}".format(urllib.quote(location.encode("utf-8")), language)
+            location = self.getNameFromGoogle(googleCapitalResolver)
+            if location != None and self.loopcounter < 2:
+                x = re.match("(?P<location>.*)", location)
+                # ok we should now have more details, lets call our self
+                self.loopcounter += 1
+                self.forcastWeatherAtLocation(speech, language, x)
+                return
+            else:
+                self.say(random.choice(errorText[language]))
+                self.complete_request()
+                return
         
         self.showCurrentWeatherWithWOEID(language, woeidElem.text)
         
