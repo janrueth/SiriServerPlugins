@@ -475,7 +475,7 @@ class yahooWeather(Plugin):
             self.say(random.choice(errorText[language]))
             self.complete_request()
             return
-        self.logger.debug(result)
+        
         result = ElementTree.XML(result)
         
         #get the item
@@ -625,7 +625,6 @@ class yahooWeather(Plugin):
         try:
             result = urllib2.urlopen(reverseLookup, timeout=5).read()
         except:
-            print random.choice(errorText[language])
             self.say(random.choice(errorText[language]))
             self.complete_request()
             return
