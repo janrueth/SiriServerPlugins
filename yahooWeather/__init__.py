@@ -571,8 +571,8 @@ class yahooWeather(Plugin):
         if googleLocation != None:
             location = googleLocation
             
-        query = "select woeid, placeTypeName from geo.places where text=\"{0}\" limit 1".format(location)
-        lookup = "http://query.yahooapis.com/v1/public/yql?q={0}&format=xml".format(urllib.quote(query.encode("utf-8")))
+        query = u"select woeid, placeTypeName from geo.places where text=\"{0}\" limit 1".format(location)
+        lookup = u"http://query.yahooapis.com/v1/public/yql?q={0}&format=xml".format(urllib.quote(query.encode("utf-8")))
         #lookup = "http://where.yahooapis.com/geocode?location={0}&appid={1}".format(urllib.quote(location.encode("utf-8")), yahooAPIkey)
         result = None
         try:
