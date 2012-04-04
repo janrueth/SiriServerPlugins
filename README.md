@@ -28,6 +28,9 @@ At the moment there are:
 * **Yahoo Weather Plugin**:
   This plugin gives you weather forecasts of your current location or any other location.
 
+* **Current Time Plugin**:
+  This plugin allows you to ask for the time at a specific location or at your current
+
 * **RequestHandler Plugin**:
   This plugin enables you to react on search button presses if something was not recognized by SiriServer.
   It will probably be extended to other delayed requests that might be handeled in the future.
