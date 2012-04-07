@@ -28,6 +28,10 @@ At the moment there are:
 * **Yahoo Weather Plugin**:
   This plugin gives you weather forecasts of your current location or any other location.
 
+* **EPG Plugin for German Television**:
+  This plugin offers an electronic program guide (tv schedule) for german television. Using services from http://tvprofil.net/xmltv/
+  Currently it will display and read the program out, formatting will likely be improved in the future
+
 * **Current Time Plugin**:
   This plugin allows you to ask for the time at a specific location or at your current
 
