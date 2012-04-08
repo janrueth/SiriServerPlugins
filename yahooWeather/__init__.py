@@ -468,10 +468,8 @@ class yahooWeather(Plugin):
     def showCurrentWeatherWithWOEID(self, language, woeid, metric = True):
         # we can only get 2 day weather with woeid that suxx
         weatherLookup = "http://weather.yahooapis.com/forecastrss?w={0}&u={1}".format(woeid, "c" if metric else "f")
-        result = None
-        try:
-            result = urllib2.urlopen(weatherLookup, timeout=5).read()
-        except:
+        result = getWebsite(weatherLookup, timeout=5)
+        if result == None:
             self.say(random.choice(errorText[language]))
             self.complete_request()
             return
@@ -493,8 +491,10 @@ class yahooWeather(Plugin):
             loc = match.group('locationID')
             weatherLocation = self.getWeatherLocation(loc[:-2], result)
             fiveDayForecast = "http://xml.weather.yahoo.com/forecastrss/{0}.xml".format(loc)
+            
+            
             try:
-                result = urllib2.urlopen(fiveDayForecast, timeout=5).read()
+                result = self.getWebsite(fiveDayForecast, timeout=5)
                 result = ElementTree.XML(result)
                 item = result.find("channel/item")
             except:
@@ -552,7 +552,7 @@ class yahooWeather(Plugin):
         
     def getNameFromGoogle(self, request):
         try:
-            result = urllib2.urlopen(request, timeout=5).read()
+            result = getWebsite(request, timeout=5)
             root = ElementTree.XML(result)
             location = root.find("result/formatted_address")
             location = location.text
@@ -574,10 +574,9 @@ class yahooWeather(Plugin):
         query = u"select woeid, placeTypeName from geo.places where text=\"{0}\" limit 1".format(location)
         lookup = u"http://query.yahooapis.com/v1/public/yql?q={0}&format=xml".format(urllib.quote(query.encode("utf-8")))
         #lookup = "http://where.yahooapis.com/geocode?location={0}&appid={1}".format(urllib.quote(location.encode("utf-8")), yahooAPIkey)
-        result = None
-        try:
-            result = urllib2.urlopen(lookup, timeout=5).read()
-        except:
+        
+        result = getWebsite(lookup, timeout=5)
+        if result == None:
             self.say(random.choice(errorText[language]))
             self.complete_request()
             return
@@ -621,10 +620,8 @@ class yahooWeather(Plugin):
         query = "select woeid from geo.places where text=\"{0},{1}\"".format(lat,lng)
         reverseLookup = "http://query.yahooapis.com/v1/public/yql?q={0}&format=xml".format(urllib.quote(query.encode("utf-8")))
         #reverseLookup = "http://where.yahooapis.com/geocode?location={0},{1}&gflags=R&appid={2}".format(lat, lng, yahooAPIkey)
-        result = None
-        try:
-            result = urllib2.urlopen(reverseLookup, timeout=5).read()
-        except:
+        result = getWebsite(reverseLookup, timeout=5)
+        if result == None:
             self.say(random.choice(errorText[language]))
             self.complete_request()
             return

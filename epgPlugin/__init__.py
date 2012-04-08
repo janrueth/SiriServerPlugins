@@ -91,13 +91,10 @@ class ThreadProcessor(threading.Thread):
                 break
             
             try:
-                print "Getting {0}".format(host)
-                url = urllib2.urlopen(host, timeout=10)
-                xml = url.read()
-                url.close()
+                xml = getWebsite(host, timeout=5)
                 xml = ElementTree.XML(xml)
                 self.resultQueue.add_item(program_from_xml(xml, self.lookupTime))
-                url.close()
+                
             except:
                 pass
             #signals to queue job is done
@@ -205,7 +202,7 @@ class ElectronicProgramGuide(Plugin):
         daily = "http://tvprofil.net/xmltv/data/{0}/{1:%Y-%m-%d}_{0}_tvprofil.net.xml".format(channel_id, lookupTime)
              
         try:      
-            xml = urllib2.urlopen(daily, timeout=10).read()
+            xml = getWebsite(daily, timeout=5)
         except:
             self.say("Ups, ich konnte keine Daten empfangen, versuch es später nocheinmal")
             self.complete_request()
@@ -244,9 +241,8 @@ class ElectronicProgramGuide(Plugin):
         
         daily = "http://tvprofil.net/xmltv/data/{0}/{1:%Y-%m-%d}_{0}_tvprofil.net.xml".format(channel_id, lookupTime)
              
-        try:      
-            xml = urllib2.urlopen(daily, timeout=10).read()
-        except:
+        xml = getWebsite(daily, timeout=5)
+        if xml == None:
             self.say("Ups, ich konnte keine Daten empfangen, versuch es später nocheinmal")
             self.complete_request()
             return

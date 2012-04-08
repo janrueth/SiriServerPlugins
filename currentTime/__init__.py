@@ -36,7 +36,7 @@ localizations = {
 }
 def getNameFromGoogle(request):
     try:
-        result = urllib2.urlopen(request, timeout=5).read()
+        result = getWebsite(request, timeout=5)
         root = json.loads(result)
         location = root["results"][0]["formatted_address"]
         return location
@@ -105,7 +105,7 @@ class currentTime(Plugin):
         request = u"http://query.yahooapis.com/v1/public/yql?q={0}&format=json&callback=".format(urllib.quote(query.encode("utf-8")))
         timeZoneId = None
         try:
-            result = urllib2.urlopen(request, timeout=5).read()
+            result = getWebsite(request, timeout=5)
             root = json.loads(result)
             place = root["query"]["results"]["place"]
             if type(place) == types.ListType:
