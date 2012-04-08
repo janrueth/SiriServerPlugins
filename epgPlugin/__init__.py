@@ -93,7 +93,7 @@ class ThreadProcessor(threading.Thread):
             try:
                 xml = getWebsite(host, timeout=5)
                 xml = ElementTree.XML(xml)
-                self.resultQueue.add_item(program_from_xml(xml, self.lookupTime))
+                self.resultQueue.add_item(program_from_xml(xml, self.lookupTime, self.inBetween))
                 
             except:
                 pass
@@ -171,7 +171,7 @@ class ElectronicProgramGuide(Plugin):
         
         
     
-    @register("de-DE", u"Was (kommt|läuft) (jetzt|(gerade|grade)|jetzt (gerade|grade)|im moment) im Fernsehen")
+    @register("de-DE", u"Was (kommt|läuft) (jetzt|(gerade|grade|grad)|jetzt (gerade|grade|grad)|im moment) im Fernsehen")
     def now(self, speech, language):
         
         lookupTime = datetime.datetime.now() 
@@ -182,7 +182,7 @@ class ElectronicProgramGuide(Plugin):
         self.printProgram(program)
         self.complete_request()
     
-    @register("de-DE", u"Was (kommt|läuft) (jetzt|(gerade|grade)|jetzt (gerade|grade)|im moment) auf (?P<channel>[\w ]+)")
+    @register("de-DE", u"Was (kommt|läuft) (jetzt|(gerade|grade|grad)|jetzt (gerade|grade|grad)|im moment) auf (?P<channel>[\w ]+)")
     def nowOnChannel(self, speech, language, regex):
         channel = regex.group('channel').strip().lower()
         
