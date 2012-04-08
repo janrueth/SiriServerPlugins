@@ -201,9 +201,9 @@ class ElectronicProgramGuide(Plugin):
     
         daily = "http://tvprofil.net/xmltv/data/{0}/{1:%Y-%m-%d}_{0}_tvprofil.net.xml".format(channel_id, lookupTime)
              
-        try:      
-            xml = getWebsite(daily, timeout=5)
-        except:
+        
+        xml = getWebsite(daily, timeout=5)
+        if xml == None:
             self.say("Ups, ich konnte keine Daten empfangen, versuch es später nocheinmal")
             self.complete_request()
             return
