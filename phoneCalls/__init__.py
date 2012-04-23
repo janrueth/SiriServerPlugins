@@ -98,6 +98,13 @@ errorOnCallResponse={'en-US':
 }
 
 class phonecallPlugin(Plugin):
+    __examples__ = {
+        'en-US': (
+            'Phone\n'
+            '  Call Steve\n'
+            '  Call John Smith mobile\n'
+        ),
+    }
 
     def searchUserByName(self, personToLookup):
         search = PersonSearch(self.refId)

@@ -315,7 +315,14 @@ place = "{http://where.yahooapis.com/v1/schema.rng}"
 idFinder = re.compile("/(?P<locationID>[A-z0-9_]+).html")
 
 class yahooWeather(Plugin):
-    
+    __examples__ = {
+        'en-US': (
+            'Weather\n'
+            '  What will the weather be like?\n'
+            '  Weather in New York\n'
+        ),
+    }
+
     def __init__(self):
         super(yahooWeather, self).__init__()
         self.loopcounter = 0

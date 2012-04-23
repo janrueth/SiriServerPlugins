@@ -46,7 +46,17 @@ def getNameFromGoogle(request):
 
 
 class currentTime(Plugin):
-    
+    __examples__ = {
+        'en-US': (
+            'Time:\n'
+            '  Time\n'
+            '  What is the current time?\n'
+            '\n'
+            '  Time in Los Angeles\n'
+            '  What is the time in Tokyo?\n'
+        ),
+    }
+
     def showWait(self, language):
         textView = UIAssistantUtteranceView()
         textView.speakableText = textView.text = random.choice(localizations['search'][language])

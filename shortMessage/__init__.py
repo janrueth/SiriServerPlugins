@@ -170,7 +170,14 @@ namesToNumberTypes = {
 }
 
 class shortMessaging(Plugin):
-    
+    __examples__ = {
+        'en-US': (
+            'Text messaging\n'
+            '  Text John Appleseed\n'
+            '  Send a text to Mom\n'
+        ),
+    }
+
     def finalSend(self, sms, language):
         
         commitCMD = DomainObjectCommit(self.refId)
