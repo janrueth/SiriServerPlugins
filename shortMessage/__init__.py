@@ -526,7 +526,7 @@ class shortMessaging(Plugin):
             lst.items.append(item)
         return root
     
-    @register("en-US", "(Write|Send)( a)?( new)? (message|sms) to (?P<recipient>[\w ]+?)$")
+    @register("en-US", "((Write|Send)( a)?( new)?( text)? (message|sms) to|text) (?P<recipient>[\w ]+?)$")
     @register("de-DE", "(Sende|Schreib.)( eine)?( neue)? (Nachricht|sms) an (?P<recipient>[\w ]+?)$")
     def sendSMS(self, speech, lang, regex):
         recipient = regex.group('recipient')
