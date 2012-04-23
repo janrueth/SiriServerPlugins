@@ -560,7 +560,7 @@ class yahooWeather(Plugin):
         except:
             return None
     
-    @register("en-US", "(what( is|'s) the )?weather( like)? in (?P<location>[\w ]+?)$")
+    @register("en-US", "(what( is| will|'s) the )?(weather|weather forecast|forecast)( be)?( like)?( in | for )(?P<location>[\w ]+?)$")
     @register('de-DE', "(wie ist das )?wetter in (?P<location>[\w ]+?)$")
     def forcastWeatherAtLocation(self, speech, language, regex):
         self.showWaitPlease(language)
@@ -607,7 +607,7 @@ class yahooWeather(Plugin):
         
         self.showCurrentWeatherWithWOEID(language, woeidElem.text)
         
-    @register("en-US", "weather|forecast")
+    @register("en-US", "(what( is| will|'s) the )?(weather|weather forecast|forecast)( be)?( like)?$")
     @register("de-DE", "wetter(vorhersage)?")
     def forcastWeatherAtCurrentLocation(self, speech, language):
         location = self.getCurrentLocation()

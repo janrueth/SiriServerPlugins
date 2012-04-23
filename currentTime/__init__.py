@@ -61,7 +61,7 @@ class currentTime(Plugin):
         self.sendRequestWithoutAnswer(rootAnchor)
 
     @register("de-DE", "(Wie ?viel Uhr.*)|(.*Uhrzeit.*)")     
-    @register("en-US", "(What.*time.*)|(.*current time.*)")
+    @register("en-US", "(?i)(What )?(is )?(the )?(current )?time ?(is ?)?(it ?)?")
     def currentTime(self, speech, language):
         #first tell that we look it up
         self.showWait(language)
@@ -87,7 +87,7 @@ class currentTime(Plugin):
         self.complete_request()
     
     @register("de-DE", "(Wieviel Uhr.*in|Uhrzeit.*in) (?P<loc>[\w ]+)")
-    @register("en-US", "(What.*time.*in|.*current time.*in) (?P<loc>[\w ]+)")
+    @register("en-US", "(?i)(What.*time.*in|.*current time.*in|time) (?P<loc>[\w ]+)")
     def currentTimeIn(self, speech, language, matchedRegex):
         
         self.showWait(language)
