@@ -645,5 +645,3 @@ class yahooWeather(Plugin):
         
         
         self.showCurrentWeatherWithWOEID(language, woeidElem.text)
-        
-        

@@ -565,4 +565,3 @@ class shortMessaging(Plugin):
                 return # complete_request is done there
         self.say(responses['notFound'][lang])                         
         self.complete_request()
-        
