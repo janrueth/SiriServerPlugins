@@ -57,8 +57,13 @@ responses = {
      },
 'askForMessage':
     {'de-DE': [u"Was willst du schreiben?", u"Was soll drin stehen?", u"Du kannst mir jetzt diktieren!"],
-     'en-US': [u"What do you want to say?", u"What do you want to include in the message?", u"Please dictate me the contents!"]
+     'en-US': [u"What do you want to say?", u"What do you want to include in the message?"]
      },
+'showCurrent':
+    {
+     'en-US': [u"Here's your message so far"],
+     'de-DE': [u"Dies ist was es bisher so"],
+    },
 'showUpdate': 
     {'de-DE': [u"Ich hab deine Nachricht geschrieben. Willst du sie jetzt senden?", u"OK. Willst du die Nachricht jetzt senden?"],
      'en-US': [u"I updated your message. Ready to send it?", u"Ok, I got that, do you want to send it?", u"Thanks, do you want to send it now?"]
@@ -350,6 +355,8 @@ class shortMessaging(Plugin):
     def askForClarification(self, sms, language):
         createAnchor = self.createSmsSnippet(sms, True, "CreateSms#notReadyToSendSms", random.choice(responses['clarification'][language]), language)
         
+        self.say(random.choice(responses['showCurrent'][language]))
+        self.say(sms.message)
         response = self.getResponseForRequest(createAnchor)
         match = re.match("\^smsConfirmation\^=\^(?P<answer>.*)\^", response)
         if match:
